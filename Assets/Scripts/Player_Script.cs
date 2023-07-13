@@ -14,7 +14,7 @@ public class Player_Script : MonoBehaviour
     [SerializeField]
     private LayerMask _groundLayer;
 
-    private bool resetJumpNeeded = false; 
+    private bool _resetJump = false; 
 
     // variable for jumpForce
     // variable for grounded = false
@@ -25,39 +25,38 @@ public class Player_Script : MonoBehaviour
  
     void Update()
     {
-        float move = Input.GetAxisRaw("Horizontal");
+        DidMove();  
+    }
 
-        // if spaceKey && grounded == true
-        if (Input.GetKeyDown(KeyCode.Space) && _grounded == true)
+    void DidMove() 
+    {
+        float move = Input.GetAxisRaw("Horizontal");
+        _rigid.velocity = new Vector2(move, _rigid.velocity.y); 
+
+        if (Input.GetKeyDown(KeyCode.Space ) && IsGrounded() == true) 
         {
             _rigid.velocity = new Vector2(_rigid.velocity.x, _jumpForce);
-            _grounded = false;
-            resetJumpNeeded = true;
             StartCoroutine(ResetJumpNeededRoutine());
         }
-        // current velocity = new velocity (current X, jumpforce)
-        // grounded = false
+    }
 
-        //2D raycast to the ground
-        RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, Vector2.down, 0.8f, _groundLayer);
-        Debug.DrawRay(transform.position, Vector2.down * 0.8f, Color.green);
- 
-        if (hitInfo.collider != null)  
+    private bool IsGrounded()
+    {
+        RaycastHit2D hitInfo =  Physics2D.Raycast(transform.position, Vector2.down , 0.8f, _groundLayer);
+        if (hitInfo.collider != null) 
         {
-            Debug.Log("Hit: " + hitInfo.collider.name);
-            if (resetJumpNeeded == false) 
-                _grounded = true;
+            if (_resetJump == false) 
+                return true;
         }
-        //if hitinfo != nul
-        //grounded = true
-
-        _rigid.velocity = new Vector2(move, _rigid.velocity.y); 
+         
+        return false;
     }
 
     IEnumerator ResetJumpNeededRoutine() 
     {
+        _resetJump = true;
         yield return new WaitForSeconds(0.1f);
-        resetJumpNeeded = false;
+        _resetJump = false;
     }
 } 
 
