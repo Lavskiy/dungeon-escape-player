@@ -14,6 +14,9 @@ public class Player_Script : MonoBehaviour
     [SerializeField]
     private LayerMask _groundLayer;
 
+    [SerializeField]
+    private float _speed = 1.0f;
+
     private bool _resetJump = false; 
 
     // variable for jumpForce
@@ -30,9 +33,18 @@ public class Player_Script : MonoBehaviour
 
     void DidMove() 
     {
-        float move = Input.GetAxisRaw("Horizontal");
-        _rigid.velocity = new Vector2(move, _rigid.velocity.y); 
+        Run();
+        Jump();
+    }
 
+    private void Run() 
+    {
+        float move = Input.GetAxisRaw("Horizontal");
+        _rigid.velocity = new Vector2(move * _speed, _rigid.velocity.y);
+    }
+
+    private void Jump()
+    {
         if (Input.GetKeyDown(KeyCode.Space ) && IsGrounded() == true) 
         {
             _rigid.velocity = new Vector2(_rigid.velocity.x, _jumpForce);
