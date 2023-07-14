@@ -16,6 +16,7 @@ public class Player_Script : MonoBehaviour
 
     [SerializeField]
     private float _speed = 1.0f;
+    private PlayerAnimation _animation;
 
     private bool _resetJump = false; 
 
@@ -24,6 +25,8 @@ public class Player_Script : MonoBehaviour
     void Start()
     {
         _rigid = GetComponent<Rigidbody2D>();
+        //assign handle to playeranimation 
+        _animation = GetComponent<PlayerAnimation>();
     }
  
     void Update()
@@ -41,6 +44,7 @@ public class Player_Script : MonoBehaviour
     {
         float move = Input.GetAxisRaw("Horizontal");
         _rigid.velocity = new Vector2(move * _speed, _rigid.velocity.y);
+        _animation.Move(move);
     }
 
     private void Jump()
