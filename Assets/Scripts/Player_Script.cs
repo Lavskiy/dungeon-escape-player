@@ -16,8 +16,8 @@ public class Player_Script : MonoBehaviour
 
     [SerializeField]
     private float _speed = 1.0f;
-    private PlayerAnimation _animation;
-
+    private PlayerAnimation _playerAnimation;
+    private SpriteRenderer _playerSprite;
     private bool _resetJump = false; 
 
     // variable for jumpForce
@@ -26,15 +26,16 @@ public class Player_Script : MonoBehaviour
     {
         _rigid = GetComponent<Rigidbody2D>();
         //assign handle to playeranimation 
-        _animation = GetComponent<PlayerAnimation>();
+        _playerAnimation = GetComponent<PlayerAnimation>();
+        _playerSprite = GetComponentInChildren<SpriteRenderer>();
     }
  
     void Update()
     {
-        DidMove();  
+        Move();  
     }
 
-    void DidMove() 
+    void Move() 
     {
         Run();
         Jump();
@@ -43,8 +44,11 @@ public class Player_Script : MonoBehaviour
     private void Run() 
     {
         float move = Input.GetAxisRaw("Horizontal");
+
+        Flip(move);
+
         _rigid.velocity = new Vector2(move * _speed, _rigid.velocity.y);
-        _animation.Move(move);
+        _playerAnimation.Move(move);
     }
 
     private void Jump()
@@ -66,6 +70,17 @@ public class Player_Script : MonoBehaviour
         }
          
         return false;
+    }
+
+    private void Flip(float move) 
+    {
+        if (move > 0) 
+        {
+            _playerSprite.flipX = false;
+        } else if (move < 0)
+        {
+            _playerSprite.flipX = true;
+        }
     }
 
     IEnumerator ResetJumpNeededRoutine() 
